@@ -10,37 +10,37 @@
   #map { width: 100%; height: 100vh; }
   .legend, .leaflet-control-layers {
     background: white;
-    padding: 10px 14px;
+    padding: 7px 10px;
     border-radius: 8px;
     box-shadow: 0 1px 6px rgba(0,0,0,0.3);
-    font-size: 13px;
-    line-height: 1.5;
-    max-height: 80vh;
-    max-width: 78vw;
+    font-size: 12px;
+    line-height: 1.3;
+    max-height: 60vh;
+    max-width: 62vw;
     overflow-y: auto;
     box-sizing: border-box;
   }
-  .legend h4 { margin: 0 0 6px 0; font-size: 14px; }
+  .legend h4 { margin: 0 0 4px 0; font-size: 12.5px; }
 
   /* --- Collapsible panel header / toggle button --- */
   .panel-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
+    gap: 6px;
     cursor: pointer;
     user-select: none;
   }
   .panel-header h4 { margin: 0; }
   .panel-toggle-btn {
     flex: 0 0 auto;
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     border: none;
     border-radius: 5px;
     background: #edf2f7;
     color: #2d3748;
-    font-size: 13px;
+    font-size: 11px;
     line-height: 1;
     display: flex;
     align-items: center;
@@ -49,8 +49,8 @@
   }
   .panel-toggle-btn:active { background: #e2e8f0; }
   .panel-body {
-    margin-top: 8px;
-    max-height: 65vh;
+    margin-top: 5px;
+    max-height: 45vh;
     overflow-y: auto;
   }
   .legend.collapsed .panel-body { display: none; }
@@ -76,27 +76,126 @@
   .fs-icon-exit { display: none; }
   #map.is-fullscreen .fs-icon-enter { display: none; }
   #map.is-fullscreen .fs-icon-exit { display: inline; }
+  /* Fallback "fullscreen" used when the real Fullscreen API is unavailable
+     (e.g. iOS Safari, or the page embedded in an iframe without allow="fullscreen") */
+  #map.faux-fullscreen {
+    position: fixed !important;
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+  }
+
+  /* --- Rotate control --- */
+  .rotate-control {
+    display: flex;
+  }
+  .rotate-control a.rotate-btn {
+    background: white;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    line-height: 1;
+    color: #2d3748;
+    text-decoration: none;
+  }
+  .rotate-control a.rotate-btn:hover { background: #f0f0f0; }
+  .rotate-control a.rotate-btn:active { background: #e2e8f0; }
+  #compass-needle {
+    display: inline-block;
+    font-size: 13px;
+    transition: transform 0.15s ease-out;
+  }
+
+  /* --- Locate ("find me") control --- */
+  .locate-control a.locate-btn {
+    background: white;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2d3748;
+    text-decoration: none;
+  }
+  .locate-control a.locate-btn:hover { background: #f0f0f0; }
+  .locate-control a.locate-btn:active { background: #e2e8f0; }
+  .locate-control a.locate-btn.locating svg { animation: locate-pulse 1s ease-in-out infinite; }
+  .locate-control a.locate-btn.locate-active { color: #4285f4; }
+  @keyframes locate-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* --- "You are here" marker --- */
+  .user-location-marker { position: relative; width: 22px; height: 22px; }
+  .user-location-dot {
+    position: absolute; top: 50%; left: 50%;
+    width: 14px; height: 14px;
+    background: #4285f4;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  }
+  .user-location-pulse {
+    position: absolute; top: 50%; left: 50%;
+    width: 22px; height: 22px;
+    background: rgba(66,133,244,0.35);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0.4);
+    animation: user-location-pulse-anim 1.8s ease-out infinite;
+  }
+  @keyframes user-location-pulse-anim {
+    0% { transform: translate(-50%, -50%) scale(0.4); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+  }
+
+  /* --- Locate status toast --- */
+  .locate-toast {
+    position: absolute;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    background: rgba(26,32,44,0.92);
+    color: #fff;
+    padding: 7px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    max-width: 80vw;
+    text-align: center;
+    z-index: 2000;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .locate-toast.visible { opacity: 1; }
 
   /* --- Mobile tweaks --- */
   @media (max-width: 640px) {
     .legend, .leaflet-control-layers {
-      padding: 8px 10px;
-      font-size: 12.5px;
-      max-width: 62vw;
-      max-height: 55vh;
+      padding: 6px 9px;
+      font-size: 11.5px;
+      max-width: 58vw;
+      max-height: 48vh;
     }
-    .legend h4, .panel-header h4 { font-size: 13px; }
-    .panel-toggle-btn { width: 26px; height: 26px; font-size: 14px; }
+    .legend h4, .panel-header h4 { font-size: 12px; }
+    .panel-toggle-btn { width: 22px; height: 22px; font-size: 12px; }
     .leaflet-control-layers-toggle { width: 34px !important; height: 34px !important; }
     .leaflet-touch .leaflet-bar a { width: 34px; height: 34px; line-height: 34px; }
     .fullscreen-btn { width: 34px; height: 34px; }
+    .rotate-control a.rotate-btn { width: 34px; height: 34px; }
+    .locate-control a.locate-btn { width: 34px; height: 34px; }
     .track-stats { font-size: 10px; }
   }
   .legend span.dot, .track-swatch {
     display: inline-block;
-    width: 10px; height: 10px;
+    width: 9px; height: 9px;
     border-radius: 50%;
-    margin-right: 6px;
+    margin-right: 5px;
   }
   .popup-title { font-weight: bold; font-size: 14px; margin-bottom: 4px; }
   .popup-elev { color: #555; font-size: 12px; margin-bottom: 4px; }
@@ -111,10 +210,10 @@
   .conf-confirmed { background: #c6f6d5; color: #22543d; }
   .conf-best-guess { background: #feebc8; color: #7b341e; }
   .conf-unidentified { background: #e2e8f0; color: #4a5568; }
-  .track-row { display: flex; align-items: center; margin-bottom: 4px; cursor: pointer; }
+  .track-row { display: flex; align-items: center; margin-bottom: 2px; cursor: pointer; }
   .track-label { flex: 1; cursor: pointer; }
   .track-label { flex: 1; }
-  .track-stats { color: #888; font-size: 11px; }
+  .track-stats { color: #888; font-size: 10px; }
 </style>
 </head>
 <body>
@@ -122,8 +221,15 @@
 <div id="map"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://unpkg.com/leaflet-rotate@0.2.8/dist/leaflet-rotate-src.js"></script>
 <script>
-  const map = L.map('map').setView([42.42, 19.85], 12);
+  const map = L.map('map', {
+    rotate: true,
+    rotateControl: false,
+    touchRotate: true,
+    shiftKeyRotate: true,
+    bearing: 0
+  }).setView([42.42, 19.85], 12);
 
   const topoLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
     maxZoom: 17,
@@ -413,6 +519,29 @@
   L.control.scale({ metric: true, imperial: false, position: "bottomright" }).addTo(map);
 
   // --- Fullscreen toggle control ---
+  // Falls back to a CSS "expand to viewport" mode when the real Fullscreen API
+  // is unavailable or blocked (iOS Safari has no Fullscreen API for non-video
+  // elements, and a page embedded in an iframe without allow="fullscreen"
+  // will have requestFullscreen() rejected by the browser's permissions policy).
+  const mapEl = document.getElementById("map");
+
+  function isNativeFullscreen() {
+    return !!(document.fullscreenElement || document.webkitFullscreenElement);
+  }
+  function enterFauxFullscreen() {
+    mapEl.classList.add("faux-fullscreen", "is-fullscreen");
+    document.addEventListener("keydown", onFauxEscape);
+    setTimeout(() => map.invalidateSize(), 50);
+  }
+  function exitFauxFullscreen() {
+    mapEl.classList.remove("faux-fullscreen", "is-fullscreen");
+    document.removeEventListener("keydown", onFauxEscape);
+    setTimeout(() => map.invalidateSize(), 50);
+  }
+  function onFauxEscape(e) {
+    if (e.key === "Escape") exitFauxFullscreen();
+  }
+
   const FullscreenControl = L.Control.extend({
     options: { position: "topright" },
     onAdd: function () {
@@ -422,14 +551,27 @@
       L.DomEvent.disableClickPropagation(container);
       L.DomEvent.on(container, "click", (e) => {
         L.DomEvent.stop(e);
-        const mapEl = document.getElementById("map");
-        const isFs = document.fullscreenElement || document.webkitFullscreenElement;
-        if (!isFs) {
-          const req = mapEl.requestFullscreen || mapEl.webkitRequestFullscreen;
-          if (req) req.call(mapEl);
-        } else {
+        if (isNativeFullscreen()) {
           const exit = document.exitFullscreen || document.webkitExitFullscreen;
           if (exit) exit.call(document);
+          return;
+        }
+        if (mapEl.classList.contains("faux-fullscreen")) {
+          exitFauxFullscreen();
+          return;
+        }
+        const req = mapEl.requestFullscreen || mapEl.webkitRequestFullscreen;
+        if (!req) {
+          enterFauxFullscreen();
+          return;
+        }
+        try {
+          const result = req.call(mapEl);
+          if (result && typeof result.catch === "function") {
+            result.catch(() => enterFauxFullscreen());
+          }
+        } catch (err) {
+          enterFauxFullscreen();
         }
       });
       return container;
@@ -437,10 +579,141 @@
   });
   map.addControl(new FullscreenControl());
 
-  const mapEl = document.getElementById("map");
+  // --- Rotate map control ---
+  const RotateControl = L.Control.extend({
+    options: { position: "topleft" },
+    onAdd: function () {
+      const container = L.DomUtil.create("div", "leaflet-bar leaflet-control rotate-control");
+      container.innerHTML = `
+        <a href="#" class="rotate-btn" id="rotate-left" title="Rotate map left" role="button" aria-label="Rotate map left">&#8634;</a>
+        <a href="#" class="rotate-btn" id="rotate-reset" title="Reset map to north" role="button" aria-label="Reset map to north"><span id="compass-needle">&#9650;</span></a>
+        <a href="#" class="rotate-btn" id="rotate-right" title="Rotate map right" role="button" aria-label="Rotate map right">&#8635;</a>
+      `;
+      L.DomEvent.disableClickPropagation(container);
+      const step = 30;
+      container.querySelector("#rotate-left").addEventListener("click", (e) => {
+        e.preventDefault();
+        map.setBearing(((map.getBearing() - step) % 360 + 360) % 360);
+      });
+      container.querySelector("#rotate-right").addEventListener("click", (e) => {
+        e.preventDefault();
+        map.setBearing((map.getBearing() + step) % 360);
+      });
+      container.querySelector("#rotate-reset").addEventListener("click", (e) => {
+        e.preventDefault();
+        map.setBearing(0);
+      });
+      return container;
+    }
+  });
+  map.addControl(new RotateControl());
+
+  const compassNeedle = document.getElementById("compass-needle");
+  function updateCompassNeedle() {
+    if (!compassNeedle) return;
+    compassNeedle.style.transform = `rotate(${-map.getBearing()}deg)`;
+  }
+  map.on("rotate", updateCompassNeedle);
+  updateCompassNeedle();
+
+  // --- "Find me" / geolocation control ---
+  function showLocateMessage(msg) {
+    let toast = document.getElementById("locate-toast");
+    if (!toast) {
+      toast = document.createElement("div");
+      toast.id = "locate-toast";
+      toast.className = "locate-toast";
+      mapEl.appendChild(toast);
+    }
+    toast.textContent = msg;
+    toast.classList.add("visible");
+    clearTimeout(toast._hideTimer);
+    toast._hideTimer = setTimeout(() => toast.classList.remove("visible"), 3500);
+  }
+
+  const LocateControl = L.Control.extend({
+    options: { position: "topleft" },
+    onAdd: function () {
+      const container = L.DomUtil.create("div", "leaflet-bar leaflet-control locate-control");
+      container.innerHTML = `
+        <a href="#" class="locate-btn" id="locate-btn" title="Find my location" role="button" aria-label="Find my location">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <line x1="12" y1="2" x2="12" y2="5"></line>
+            <line x1="12" y1="19" x2="12" y2="22"></line>
+            <line x1="2" y1="12" x2="5" y2="12"></line>
+            <line x1="19" y1="12" x2="22" y2="12"></line>
+          </svg>
+        </a>`;
+      L.DomEvent.disableClickPropagation(container);
+      const btn = container.querySelector("#locate-btn");
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (!navigator.geolocation) {
+          showLocateMessage("Geolocation isn't supported by this browser.");
+          return;
+        }
+        if (window.isSecureContext === false) {
+          showLocateMessage("Location requires a secure (https) connection.");
+          return;
+        }
+        btn.classList.add("locating");
+        map.locate({ setView: true, maxZoom: 16, enableHighAccuracy: true, timeout: 10000 });
+      });
+      return container;
+    }
+  });
+  map.addControl(new LocateControl());
+
+  let userLocationMarker = null;
+  let userAccuracyCircle = null;
+
+  function userLocationIcon() {
+    return L.divIcon({
+      className: "",
+      html: `<div class="user-location-marker"><div class="user-location-pulse"></div><div class="user-location-dot"></div></div>`,
+      iconSize: [22, 22],
+      iconAnchor: [11, 11]
+    });
+  }
+
+  map.on("locationfound", (e) => {
+    const btn = document.getElementById("locate-btn");
+    if (btn) btn.classList.remove("locating");
+    if (userLocationMarker) {
+      userLocationMarker.setLatLng(e.latlng);
+    } else {
+      userLocationMarker = L.marker(e.latlng, { icon: userLocationIcon(), zIndexOffset: 1000 }).addTo(map);
+    }
+    userLocationMarker.bindPopup(`<div class="popup-title">You are here</div><div class="popup-elev">Accurate to within ${Math.round(e.accuracy)} m</div>`);
+    if (userAccuracyCircle) {
+      userAccuracyCircle.setLatLng(e.latlng).setRadius(e.accuracy);
+    } else {
+      userAccuracyCircle = L.circle(e.latlng, {
+        radius: e.accuracy,
+        color: "#4285f4",
+        weight: 1,
+        fillColor: "#4285f4",
+        fillOpacity: 0.12
+      }).addTo(map);
+    }
+  });
+
+  map.on("locationerror", (e) => {
+    const btn = document.getElementById("locate-btn");
+    if (btn) btn.classList.remove("locating");
+    let msg = "Couldn't find your location.";
+    if (e.code === 1) msg = "Location permission denied — allow location access and try again.";
+    else if (e.code === 2) msg = "Your location is currently unavailable.";
+    else if (e.code === 3) msg = "Finding your location timed out.";
+    showLocateMessage(msg);
+  });
+
   function syncFullscreenClass() {
     const isFs = document.fullscreenElement || document.webkitFullscreenElement;
-    mapEl.classList.toggle("is-fullscreen", !!isFs);
+    if (isFs || !mapEl.classList.contains("faux-fullscreen")) {
+      mapEl.classList.toggle("is-fullscreen", !!isFs);
+    }
     setTimeout(() => map.invalidateSize(), 100);
   }
   document.addEventListener("fullscreenchange", syncFullscreenClass);
@@ -449,3 +722,4 @@
 
 </body>
 </html>
+
