@@ -213,9 +213,7 @@
     });
     const popupHtml = `
       <div class="popup-title">${t.name}</div>
-      <span class="popup-confidence ${confidenceClass[t.confidence]}">${confidenceLabel[t.confidence]}</span>
       <div class="popup-elev" style="margin-top:6px;">${t.length_km} km &middot; ${t.min_ele}–${t.max_ele} m elevation</div>
-      <div class="popup-desc">${t.note}</div>
     `;
     line.bindPopup(popupHtml);
 
@@ -297,7 +295,6 @@
     marker.bindPopup(`
       <div class="popup-title">${w.name}</div>
       <div class="popup-elev">Elevation: ${w.elevation}</div>
-      <div class="popup-desc">${w.desc}</div>
     `);
   });
 
@@ -324,7 +321,6 @@
             <input type="checkbox" id="chk-${t.id}" ${checked} style="margin-right:6px;">
             <span class="track-swatch" style="background:${t.color}"></span>
             <span class="track-label">${t.name}
-              <span class="popup-confidence ${confidenceClass[t.confidence]}" style="margin-left:4px;">${confidenceLabel[t.confidence]}</span>
               <div class="track-stats">${t.length_km} km, ${t.min_ele}–${t.max_ele} m</div>
             </span>
           </div>`;
