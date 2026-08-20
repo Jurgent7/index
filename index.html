@@ -504,6 +504,33 @@
   const locateControl = new LocateControl();
   map.addControl(locateControl);
 
+  // --- Manual rotate-left / rotate-right buttons ---
+  const RotateButtonsControl = L.Control.extend({
+    options: { position: "topright" },
+    onAdd: function () {
+      const container = L.DomUtil.create("div", "leaflet-bar leaflet-control");
+      const leftBtn = L.DomUtil.create("a", "fullscreen-btn", container);
+      leftBtn.href = "#";
+      leftBtn.title = "Rotate left";
+      leftBtn.innerHTML = "&#8634;";
+      const rightBtn = L.DomUtil.create("a", "fullscreen-btn", container);
+      rightBtn.href = "#";
+      rightBtn.title = "Rotate right";
+      rightBtn.innerHTML = "&#8635;";
+      L.DomEvent.disableClickPropagation(container);
+      L.DomEvent.on(leftBtn, "click", (e) => {
+        L.DomEvent.stop(e);
+        map.setBearing((map.getBearing() || 0) - 15);
+      });
+      L.DomEvent.on(rightBtn, "click", (e) => {
+        L.DomEvent.stop(e);
+        map.setBearing((map.getBearing() || 0) + 15);
+      });
+      return container;
+    }
+  });
+  map.addControl(new RotateButtonsControl());
+
   let userLocationMarker = null;
   let userAccuracyCircle = null;
 
