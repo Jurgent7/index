@@ -443,8 +443,7 @@
   const TrackControl = L.Control.extend({
     options: { position: "topright" },
     onAdd: function () {
-      const div = L.DomUtil.create("div", "legend");
-      if (isNarrowScreen) L.DomUtil.addClass(div, "collapsed");
+      const div = L.DomUtil.create("div", "legend collapsed");
       L.DomEvent.disableClickPropagation(div);
       L.DomEvent.disableScrollPropagation(div);
       let html = `
@@ -554,8 +553,7 @@
   // Legend for waypoint markers
   const legend = L.control({ position: "bottomleft" });
   legend.onAdd = function () {
-    const div = L.DomUtil.create("div", "legend");
-    if (isNarrowScreen) L.DomUtil.addClass(div, "collapsed");
+    const div = L.DomUtil.create("div", "legend collapsed");
     L.DomEvent.disableClickPropagation(div);
     L.DomEvent.disableScrollPropagation(div);
     div.innerHTML = `
@@ -619,8 +617,7 @@
 
   const weatherControl = L.control({ position: "topright" });
   weatherControl.onAdd = function () {
-    const div = L.DomUtil.create("div", "legend");
-    if (isNarrowScreen) L.DomUtil.addClass(div, "collapsed");
+    const div = L.DomUtil.create("div", "legend collapsed");
     L.DomEvent.disableClickPropagation(div);
     L.DomEvent.disableScrollPropagation(div);
     div.innerHTML = `
