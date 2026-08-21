@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -700,6 +701,28 @@
     }
   });
   map.addControl(new RotateButtonsControl());
+
+  // --- Open full map in a new tab (always available, not just as a locate-error fallback) ---
+  const OpenInNewTabControl = L.Control.extend({
+    options: { position: "topright" },
+    onAdd: function () {
+      const container = L.DomUtil.create("div", "leaflet-bar leaflet-control fullscreen-btn");
+      container.title = "Open full map in a new tab";
+      container.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <line x1="10" y1="14" x2="21" y2="3"></line>
+        </svg>`;
+      L.DomEvent.disableClickPropagation(container);
+      L.DomEvent.on(container, "click", (e) => {
+        L.DomEvent.stop(e);
+        window.open(window.location.href, "_blank");
+      });
+      return container;
+    }
+  });
+  map.addControl(new OpenInNewTabControl());
 
   let userLocationMarker = null;
   let userAccuracyCircle = null;
