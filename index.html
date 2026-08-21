@@ -726,10 +726,24 @@
 
   map.on("locationerror", (e) => {
     if (locateControl._container) locateControl._container.classList.remove("locating");
-    L.popup()
-      .setLatLng(map.getCenter())
-      .setContent(`<div class="popup-title">Location unavailable</div><div class="popup-desc">${e.message || "Couldn't access your location. Check that location permissions are allowed for this page."}</div>`)
-      .openOn(map);
+    const blockedByIframe = /permissions policy|permissions-policy/i.test(e.message || "");
+    if (blockedByIframe) {
+      // This happens when the site embedding this map (e.g. a Wix iframe)
+      // doesn't grant the "geolocation" permission down to this page — the
+      // browser blocks the request before you even see a prompt. Opening
+      // this map as its own top-level tab always works, since there's no
+      // parent frame permission to be blocked by.
+      const openInNewTab = confirm(
+        "Location access is blocked inside this embedded map (the website hosting it hasn't enabled location permission for embedded content).\n\n" +
+        "Open the map in its own browser tab to use your location there?"
+      );
+      if (openInNewTab) window.open(window.location.href, "_blank");
+    } else {
+      L.popup()
+        .setLatLng(map.getCenter())
+        .setContent(`<div class="popup-title">Location unavailable</div><div class="popup-desc">${e.message || "Couldn't access your location. Check that location permissions are allowed for this page."}</div>`)
+        .openOn(map);
+    }
   });
 
   const mapEl = document.getElementById("map");
