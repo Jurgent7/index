@@ -617,7 +617,7 @@
     return map[code] || "—";
   }
 
-  const weatherControl = L.control({ position: "bottomleft" });
+  const weatherControl = L.control({ position: "topright" });
   weatherControl.onAdd = function () {
     const div = L.DomUtil.create("div", "legend");
     if (isNarrowScreen) L.DomUtil.addClass(div, "collapsed");
@@ -708,6 +708,11 @@
           if (exit) exit.call(document);
           return;
         }
+
+        // Remember exactly where the page was scrolled to, so exiting
+        // fullscreen can put the page back rather than leaving it jumped
+        // to wherever the browser happened to land after the transition.
+        preFullscreenScroll = { x: window.scrollX, y: window.scrollY };
 
         // Some hosts (e.g. an iframe embedded without the "allowfullscreen"
         // attribute, as is common with Wix's custom-embed widget) block the
@@ -866,10 +871,17 @@
   });
 
   const mapEl = document.getElementById("map");
+  let preFullscreenScroll = null;
   function syncFullscreenClass() {
     const isFs = document.fullscreenElement || document.webkitFullscreenElement;
     mapEl.classList.toggle("is-fullscreen", !!isFs);
     setTimeout(() => map.invalidateSize(), 100);
+    if (!isFs && preFullscreenScroll) {
+      // Exiting fullscreen: put the page back exactly where it was before,
+      // instead of leaving the visitor scrolled somewhere unexpected.
+      window.scrollTo(preFullscreenScroll.x, preFullscreenScroll.y);
+      preFullscreenScroll = null;
+    }
   }
   document.addEventListener("fullscreenchange", syncFullscreenClass);
   document.addEventListener("webkitfullscreenchange", syncFullscreenClass);
